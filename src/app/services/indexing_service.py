@@ -17,4 +17,4 @@ def index_pdf_file(file_path: Path) -> int:
         Number of document chunks indexed.
     """
    
-    return index_documents(docs)
+    return index_documents(file_path)

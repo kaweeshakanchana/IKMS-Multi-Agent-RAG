@@ -87,14 +87,11 @@ def index_documents(file_path: Path) -> int:
     # Lazy import so the API can start even if indexing deps aren't installed yet.
     from langchain_community.document_loaders import PyPDFLoader
 
-    loader = PyPDFLoader(str(file_path), mode="single")
+    loader = PyPDFLoader(str(file_path))
     docs = loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     texts = text_splitter.split_documents(docs)
-
-    loader = PyPDFLoader(str(file_path),mode="single")
-    docs = loader.load()
 
 
     vector_store = _get_vector_store()
