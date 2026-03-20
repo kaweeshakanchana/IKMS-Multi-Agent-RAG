@@ -8,7 +8,7 @@ from langchain_core.documents import Document
 from langchain_pinecone import PineconeVectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
+from langchain_community.document_loaders import PyPDFLoader
 
 from ..config import get_settings
 
@@ -92,6 +92,10 @@ def index_documents(file_path: Path) -> int:
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     texts = text_splitter.split_documents(docs)
+
+    loader = PyPDFLoader(str(file_path),mode="single")
+    docs = loader.load()
+
 
     vector_store = _get_vector_store()
     vector_store.add_documents(texts)
