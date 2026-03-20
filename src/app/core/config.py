@@ -15,7 +15,9 @@ class Settings(BaseSettings):
     # runtime code should validate before use.
     openai_api_key: str | None = None
     openai_model_name: str = "gpt-4o-mini"
-    openai_embedding_model_name: str = "text-embedding-3-large"
+
+    # HuggingFace Embeddings (free, runs locally — no API key needed)
+    hf_embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2"
 
     # Pinecone Configuration
     pinecone_api_key: str | None = None

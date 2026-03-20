@@ -6,7 +6,7 @@ from typing import List
 
 from langchain_core.documents import Document
 from langchain_pinecone import PineconeVectorStore
-from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 
@@ -20,13 +20,8 @@ def _get_vector_store() -> PineconeVectorStore:
 
     if not settings.pinecone_api_key or not settings.pinecone_index_name:
         raise RuntimeError(
-            "Missing Pinecone configuration. Set `PINECONE_API_KEY`/`pinecone_api_key` "
-            "and `PINECONE_INDEX_NAME`/`pinecone_index_name` in your environment or `.env`."
-        )
-    if not settings.openai_api_key:
-        raise RuntimeError(
-            "Missing OpenAI API key. Set `OPENAI_API_KEY` (or `openai_api_key`) "
-            "in your environment or in a local `.env` file."
+            "Missing Pinecone configuration. Set `PINECONE_API_KEY` "
+            "and `PINECONE_INDEX_NAME` in your environment or `.env`."
         )
 
     # Import lazily to avoid crashing app startup if the dependency isn't installed yet.
@@ -35,9 +30,8 @@ def _get_vector_store() -> PineconeVectorStore:
     pc = Pinecone(api_key=settings.pinecone_api_key)
     index = pc.Index(settings.pinecone_index_name)
 
-    embeddings = OpenAIEmbeddings(
-        model=settings.openai_embedding_model_name,
-        api_key=settings.openai_api_key,
+    embeddings = HuggingFaceEmbeddings(
+        model_name=settings.hf_embedding_model_name,
     )
 
     return PineconeVectorStore(
@@ -84,8 +78,6 @@ def index_documents(file_path: Path) -> int:
     Returns:
         The number of documents indexed.
     """
-    # Lazy import so the API can start even if indexing deps aren't installed yet.
-    from langchain_community.document_loaders import PyPDFLoader
 
     loader = PyPDFLoader(str(file_path))
     docs = loader.load()
