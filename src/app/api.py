@@ -3,6 +3,8 @@ from pathlib import Path
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile, status
 from fastapi.responses import JSONResponse
 
+from .services.indexing_service import index_pdf_file
+
 app = FastAPI(
     title="Class 12 Multi-Agent RAG Demo",
     description=(

@@ -12,5 +12,6 @@ dependencies = [
     "langchain-pinecone>=0.2.13",
     "pinecone>=7.3.0",
     "pypdf>=6.9.1",
+    "python-multipart>=0.0.22",
     "uvicorn>=0.42.0",
 ]
