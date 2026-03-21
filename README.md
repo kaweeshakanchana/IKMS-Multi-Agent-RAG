@@ -8,8 +8,8 @@ Instead of a traditional single-step RAG flow, this application utilizes a **Mul
 
 ## 🚀 Live Demo
 
-**Try it out here:** [https://multi-agent-rag-system.vercel.app](https://lnkd.in/gEr7j45H)  
-*(Note: Replace the display text with your actual deployed URL)*
+**Try it out here:** [(https://frontend-beta-blond-18.vercel.app/)]
+
 
 ## ✨ Features
 
