@@ -19,6 +19,14 @@ app = FastAPI(
 )
 
 
+@app.exception_handler(HTTPException)
+async def http_exception_handler(
+    request: Request, exc: HTTPException
+) -> JSONResponse:
+    """Return explicit HTTP errors without converting them to generic 500s."""
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
+
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(
     request: Request, exc: Exception
@@ -29,10 +37,6 @@ async def unhandled_exception_handler(
     separately; this is only for truly unexpected failures so API consumers
     get a consistent 500 response body.
     """
-
-    if isinstance(exc, HTTPException):
-        # Let FastAPI handle HTTPException as usual.
-        raise exc
 
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -60,8 +64,56 @@ async def qa_endpoint(payload: QuestionRequest) -> QAResponse:
             detail="`question` must be a non-empty string.",
         )
 
-    # Delegate to the service layer which runs the multi-agent QA graph
-    result = answer_question(question)
+    # Delegate to the service layer which runs the multi-agent QA graph.
+    # Convert common provider/config/runtime failures into actionable API errors
+    # instead of generic 500 responses.
+    try:
+        result = answer_question(question)
+    except Exception as exc:
+        exc_name = exc.__class__.__name__
+        message = str(exc)
+
+        lowered = message.lower()
+        if (
+            exc_name in {"RateLimitError", "ResourceExhausted"}
+            or "insufficient_quota" in lowered
+            or "quota" in lowered
+            or "rate limit" in lowered
+            or "429" in lowered
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=(
+                    "LLM provider quota/rate limit exceeded. Update billing/quota for "
+                    "the configured provider and retry."
+                ),
+            ) from exc
+
+        if "not_found" in lowered or "model" in lowered and "not found" in lowered:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=(
+                    "Configured LLM model was not found. Check your model name "
+                    "for the selected provider."
+                ),
+            ) from exc
+
+        if exc_name in {"AuthenticationError", "PermissionDeniedError"}:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=(
+                    "LLM provider authentication failed. Check your API key "
+                    "and environment configuration."
+                ),
+            ) from exc
+
+        if isinstance(exc, RuntimeError):
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail=str(exc),
+            ) from exc
+
+        raise
 
     return QAResponse(
         answer=result.get("answer", ""),
