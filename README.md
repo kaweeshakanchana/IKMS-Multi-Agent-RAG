@@ -22,4 +22,4 @@ PINECONE_API_KEY=your_pinecone_api_key
 PINECONE_ENVIRONMENT=your_pinecone_env
 PINECONE_INDEX_NAME=your_index_name
 4. Run the ApplicationStart the FastAPI server:Bashuvicorn src.app.api:app --reload
-The API will be available at http://localhost:8000. You can access the interactive Swagger documentation at http://localhost:8000/docs.(Note: Frontend UI setup instructions can be added here based on your specific implementation).🔗 LinksLive Demo: [Insert Link Here]LinkedIn Post: [Insert Link Here]
+The API will be available at http://localhost:8000. You can access the interactive Swagger documentation at http://localhost:8000/docs.(Note: Frontend UI setup instructions can be added here based on your specific implementation).🔗 LinksLive Demo:https://frontend-beta-blond-18.vercel.app/ 
