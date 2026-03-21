@@ -69,23 +69,39 @@ def retrieve(query: str, k: int | None = None) -> List[Document]:
     retriever = get_retriever(k=k)
     return retriever.invoke(query)
 
-def index_documents(file_path: Path) -> int:
-    """Index a list of Document objects into the Pinecone vector store.
+def index_documents(file_path: Path) -> dict:
+    """Index a PDF file into the Pinecone vector store and verify results.
 
     Args:
-        docs: Documents to embed and upsert into the vector index.
+        file_path: PDF file path to load and split into documents.
 
     Returns:
-        The number of documents indexed.
+        Dictionary containing counts from the split and Pinecone stats.
     """
 
     loader = PyPDFLoader(str(file_path))
     docs = loader.load()
 
+    if not docs:
+        raise ValueError(f"No pages extracted from PDF: {file_path}")
+
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     texts = text_splitter.split_documents(docs)
 
-
     vector_store = _get_vector_store()
-    vector_store.add_documents(texts)
-    return len(texts)
+
+    # Capture index stats before and after upsert for correctness validation.
+    before_stats = vector_store.index.describe_index_stats()
+    before_count = before_stats.get("total_vector_count", 0)
+
+    upsert_ids = vector_store.add_documents(texts)
+
+    after_stats = vector_store.index.describe_index_stats()
+    after_count = after_stats.get("total_vector_count", 0)
+
+    return {
+        "chunks_indexed": len(texts),
+        "upserted_count": len(upsert_ids),
+        "index_count_before": before_count,
+        "index_count_after": after_count,
+    }

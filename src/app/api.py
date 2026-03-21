@@ -40,10 +40,10 @@ async def index_pdf(file: UploadFile = File(...)) -> dict:
     file_path.write_bytes(contents)
 
     # Index the saved PDF
-    chunks_indexed = index_pdf_file(file_path)
+    indexing_result = index_pdf_file(file_path)
 
     return {
         "filename": file.filename,
-        "chunks_indexed": chunks_indexed,
+        **indexing_result,
         "message": "PDF indexed successfully.",
     }
