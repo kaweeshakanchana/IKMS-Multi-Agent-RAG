@@ -1,25 +1,45 @@
-🤖 Multi-Agent Retrieval-Augmented Knowledge System📌 Project OverviewThis project implements an advanced Multi-Agent RAG (Retrieval-Augmented Generation) pipeline designed to answer questions from PDF documents with high accuracy and reduced hallucination. Moving beyond a standard single-step RAG flow, this system utilizes LangGraph to coordinate specialized AI agents that collaboratively plan, retrieve, summarize, and verify information.This repository specifically includes the implementation of an intelligent Query Planning & Decomposition Agent, which analyzes complex, multi-part questions and creates a structured search strategy before retrieval begins.✨ Key FeaturesSemantic Document Understanding: Leverages vector embeddings to comprehend the semantic meaning of user queries and documents.Intelligent Query Planning: Dynamically rephrases ambiguous questions and decomposes complex queries into focused sub-questions for better retrieval.Fast & Scalable Retrieval: Uses Pinecone as the vector database for efficient document storage and similarity search.Hallucination Prevention: Includes a dedicated verification layer to ensure all answers are strictly grounded in the retrieved context.Production-Ready Backend: Exposes the pipeline via a robust FastAPI backend with endpoints for PDF indexing and QA.🧠 Multi-Agent WorkflowThe system orchestrates the following linear flow: START → planning → retrieval → summarization → verification → END.Planning Agent: Analyzes the user's raw question, identifies key entities, and outputs a structured natural language search plan and decomposed sub-questions.Retrieval Agent: Executes semantic searches against the Pinecone index using both the original question and the generated plan.Summarization Agent: Synthesizes a clean, accurate answer using only the retrieved context chunks.Verification Agent: Audits the response to correct inaccuracies and eliminate hallucinations before returning the final answer to the user.🛠️ Technology StackCore Framework: LangChain v1.0 Agent Orchestration: LangGraph Vector Database: Pinecone Backend API: FastAPI LLM Provider: OpenAI📂 Key Project StructurePlaintext├── src/
-│   ├── app/
-│   │   ├── api.py                    # FastAPI endpoint definitions (/qa and /index-pdf) [cite: 38]
-│   │   ├── core/
-│   │   │   ├── agents/
-│   │   │   │   ├── agents.py         # Retrieval, Summarization, Verification, and Planning agent nodes [cite: 23, 24, 25]
-│   │   │   │   ├── graph.py          # LangGraph StateGraph wiring the linear QA flow [cite: 26, 27, 28]
-│   │   │   │   ├── state.py          # QAState schema definition [cite: 29, 30]
-│   │   │   │   └── tools.py          # Retrieval tools for Pinecone queries [cite: 32, 33]
-│   │   │   └── retrieval/
-│   │   │       ├── vector_store.py   # Pinecone setup and PDF indexing [cite: 34]
-│   │   │       └── serialization.py  # Chunk-to-context-string conversion [cite: 35]
-│   │   └── services/
-│   │       └── qa_service.py         # Service facade over LangGraph QA flow [cite: 36, 37]
-🚀 Getting StartedPrerequisitesPython 3.10+Pinecone Account & API KeyOpenAI API Key1. Clone the repositoryBashgit clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
-2. Set up the environmentCreate a virtual environment and install dependencies:Bashpython -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
-pip install -r requirements.txt
-3. Configure Environment VariablesCreate a .env file in the root directory and add your credentials:Code snippetOPENAI_API_KEY=your_openai_api_key
-PINECONE_API_KEY=your_pinecone_api_key
-PINECONE_ENVIRONMENT=your_pinecone_env
-PINECONE_INDEX_NAME=your_index_name
-4. Run the ApplicationStart the FastAPI server:Bashuvicorn src.app.api:app --reload
-The API will be available at http://localhost:8000. You can access the interactive Swagger documentation at http://localhost:8000/docs.(Note: Frontend UI setup instructions can be added here based on your specific implementation).🔗 LinksLive Demo:https://frontend-beta-blond-18.vercel.app/ 
+# 🧠 Multi-Agent Retrieval-Augmented Knowledge System
+
+![AI](https://img.shields.io/badge/AI-Multi--Agent_Architecture-0052CC?style=flat-square) ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi&logoColor=white) ![LangGraph](https://img.shields.io/badge/LangGraph-Multi--Agent-6f42c1?style=flat-square) ![Pinecone](https://img.shields.io/badge/Pinecone-VectorDB-000000?style=flat-square) ![Next.js](https://img.shields.io/badge/Frontend-UI-000000?style=flat-square&logo=react)
+
+A fully automated, intelligent system designed to answer complex questions from PDF documents with high accuracy and reduced hallucination, ensuring every response is strictly grounded in retrieved context.
+
+Instead of a traditional single-step RAG flow, this application utilizes a **Multi-Agent Architecture** powered by **LangGraph**, where specialized AI agents collaborate behind the scenes to orchestrate complex reasoning and verification workflows.
+
+## 🚀 Live Demo
+
+**Try it out here:** [https://multi-agent-rag-system.vercel.app](https://lnkd.in/gEr7j45H)  
+*(Note: Replace the display text with your actual deployed URL)*
+
+## ✨ Features
+
+* **Multi-Agent Orchestration:** Specialized AI agents handle distinct parts of the Retrieval-Augmented Generation process:
+  * 🗺️ **Planning Agent:** Analyzes complex or ambiguous user questions, identifies key entities, and generates a structured, multi-step search strategy.
+  * 🔍 **Retrieval Agent:** Executes semantic searches over the Pinecone vector index to gather the most relevant document chunks based on the plan.
+  * 📝 **Summarization Agent:** Synthesizes a clean, accurate answer using *only* the retrieved context, preventing outside knowledge from creeping in.
+  * 🛡️ **Verification Agent:** Acts as an anti-hallucination guardrail by auditing the final response against the original retrieved text before showing it to the user.
+
+* **Semantic Document Understanding:** Leverages advanced vector embeddings to comprehend the actual meaning of your documents.
+* **Production-Ready Backend:** Robust FastAPI endpoints for handling real-time QA and dynamic PDF indexing.
+
+## 🛠️ Tech Stack
+
+* **Framework Foundation:** LangChain v1.0
+* **Agent Orchestration:** LangGraph
+* **Vector Database:** Pinecone
+* **Backend Framework:** FastAPI
+* **LLM Provider:** OpenAI
+
+## 💻 Getting Started
+
+### Prerequisites
+* Python 3.10+
+* Pinecone API Key
+* OpenAI API Key
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
+   cd your-repo-name
