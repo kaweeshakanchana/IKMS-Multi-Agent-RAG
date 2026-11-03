@@ -1,6 +1,6 @@
 # IKMS RAG Agent System
 
-🚀 **Live Demo (Try it):** [https://ikms-rag-agent-system.vercel.app](https://ikms-rag-agent-system.vercel.app)
+🚀 **Live Demo (Try it):** [https://ikms-rag-agent-system.vercel.app](https://frontend-beta-blond-18.vercel.app/)
 
 ---
 
